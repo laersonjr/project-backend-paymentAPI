@@ -9,6 +9,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class WalletService {
 
+    @Autowired
+    private ModelMapper modelMapper;
 
+    private Wallet toEntity(CreateWalletModel createWalletModel){
+        return modelMapper.map(createWalletModel, Wallet.class);
+    }
 
 }
