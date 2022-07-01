@@ -23,7 +23,6 @@ public class Wallet {
     @EqualsAndHashCode.Include
     private UUID id;
 
-    @NotBlank
     @Column(name = "name", nullable = false)
     private String ownerName;
 
