@@ -16,6 +16,9 @@ public class WalletController {
     @Autowired
     private WalletRepository walletRepository;
 
-
+    @GetMapping
+    public List<Wallet> listarWallet(){
+        return walletRepository.findAll();
+    }
 
 }
