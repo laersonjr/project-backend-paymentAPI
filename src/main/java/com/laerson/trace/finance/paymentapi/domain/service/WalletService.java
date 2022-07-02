@@ -2,7 +2,10 @@ package com.laerson.trace.finance.paymentapi.domain.service;
 
 import com.laerson.trace.finance.paymentapi.api.model.CreateWalletModel;
 import com.laerson.trace.finance.paymentapi.api.model.GetLimitWalletModel;
+import com.laerson.trace.finance.paymentapi.api.model.PaymentWalletModel;
 import com.laerson.trace.finance.paymentapi.domain.model.Wallet;
+import com.laerson.trace.finance.paymentapi.domain.model.WalletPayment;
+import com.laerson.trace.finance.paymentapi.domain.repository.WalletPaymentRepository;
 import com.laerson.trace.finance.paymentapi.domain.repository.WalletRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +24,9 @@ public class WalletService {
     @Autowired
     private WalletRepository walletRepository;
 
+    @Autowired
+    private WalletPaymentRepository walletPaymentRepository;
+
     public Wallet createWalletService(CreateWalletModel createWalletModel){
         Wallet wallet = toEntity(createWalletModel);
         wallet.setWalletName(wallet.getOwnerName());
@@ -32,6 +38,13 @@ public class WalletService {
     public GetLimitWalletModel availableLimitService(UUID walletId) {
         Wallet wallet = findWallet(walletId);
         return toModel(wallet);
+    }
+
+    public void makePaymentService(PaymentWalletModel paymentWalletModel, UUID walletId) {
+        Wallet wallet = findWallet(walletId);
+        WalletPayment walletPayment = toEntityPayment(paymentWalletModel);
+        walletPayment.setWallet(wallet);
+        walletPaymentRepository.save(walletPayment);
     }
 
     private Wallet toEntity(CreateWalletModel createWalletModel){
@@ -46,4 +59,9 @@ public class WalletService {
         Wallet wallet = walletRepository.getReferenceById(id);
         return wallet;
     }
+
+    private WalletPayment toEntityPayment(PaymentWalletModel paymentWalletModel){
+        return modelMapper.map(paymentWalletModel, WalletPayment.class);
+    }
+
 }

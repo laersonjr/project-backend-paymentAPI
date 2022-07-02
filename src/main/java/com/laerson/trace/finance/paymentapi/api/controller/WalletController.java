@@ -2,6 +2,7 @@ package com.laerson.trace.finance.paymentapi.api.controller;
 
 import com.laerson.trace.finance.paymentapi.api.model.CreateWalletModel;
 import com.laerson.trace.finance.paymentapi.api.model.GetLimitWalletModel;
+import com.laerson.trace.finance.paymentapi.api.model.PaymentWalletModel;
 import com.laerson.trace.finance.paymentapi.domain.model.Wallet;
 import com.laerson.trace.finance.paymentapi.domain.repository.WalletRepository;
 import com.laerson.trace.finance.paymentapi.domain.service.WalletService;
@@ -39,6 +40,13 @@ public class WalletController {
     public ResponseEntity<Wallet> criarWallet(@Valid @RequestBody CreateWalletModel createWalletModel){
         Wallet walletSalva = walletService.createWalletService(createWalletModel);
         return ResponseEntity.status(HttpStatus.CREATED).body(walletSalva);
+    }
+
+    @PostMapping("/{walletId}/payments")
+    @ResponseStatus(HttpStatus.OK)
+    public void makePayment(@Valid @RequestBody PaymentWalletModel paymentWalletModel,
+                            @PathVariable UUID walletId) {
+        walletService.makePaymentService(paymentWalletModel, walletId);
     }
 
 }

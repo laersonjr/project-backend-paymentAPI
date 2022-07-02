@@ -22,10 +22,10 @@ public class WalletPayment {
     @EqualsAndHashCode.Include
     private UUID id;
 
-    @NotNull
+    @Column(name = "amount", nullable = false)
     private BigDecimal amount;
 
-    @NotNull
+    @Column(name = "date", nullable = false)
     private String date;
 
     @NotNull
