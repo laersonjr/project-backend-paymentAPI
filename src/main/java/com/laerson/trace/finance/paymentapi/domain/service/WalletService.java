@@ -1,6 +1,7 @@
 package com.laerson.trace.finance.paymentapi.domain.service;
 
 import com.laerson.trace.finance.paymentapi.api.model.CreateWalletModel;
+import com.laerson.trace.finance.paymentapi.api.model.GetLimitWalletModel;
 import com.laerson.trace.finance.paymentapi.domain.model.Wallet;
 import com.laerson.trace.finance.paymentapi.domain.repository.WalletRepository;
 import org.modelmapper.ModelMapper;
@@ -29,6 +30,10 @@ public class WalletService {
 
     private Wallet toEntity(CreateWalletModel createWalletModel){
         return modelMapper.map(createWalletModel, Wallet.class);
+    }
+
+    private GetLimitWalletModel toModel(Wallet wallet){
+        return modelMapper.map(wallet, GetLimitWalletModel.class);
     }
 
 }
