@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Service
 public class WalletService {
@@ -28,6 +29,11 @@ public class WalletService {
         return walletRepository.save(wallet);
     }
 
+    public GetLimitWalletModel availableLimitService(UUID walletId) {
+        Wallet wallet = findWallet(walletId);
+        return toModel(wallet);
+    }
+
     private Wallet toEntity(CreateWalletModel createWalletModel){
         return modelMapper.map(createWalletModel, Wallet.class);
     }
@@ -36,4 +42,8 @@ public class WalletService {
         return modelMapper.map(wallet, GetLimitWalletModel.class);
     }
 
+    private Wallet findWallet(UUID id){
+        Wallet wallet = walletRepository.getReferenceById(id);
+        return wallet;
+    }
 }

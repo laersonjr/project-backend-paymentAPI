@@ -1,6 +1,7 @@
 package com.laerson.trace.finance.paymentapi.api.controller;
 
 import com.laerson.trace.finance.paymentapi.api.model.CreateWalletModel;
+import com.laerson.trace.finance.paymentapi.api.model.GetLimitWalletModel;
 import com.laerson.trace.finance.paymentapi.domain.model.Wallet;
 import com.laerson.trace.finance.paymentapi.domain.repository.WalletRepository;
 import com.laerson.trace.finance.paymentapi.domain.service.WalletService;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/wallets")
@@ -25,6 +27,12 @@ public class WalletController {
     @GetMapping
     public List<Wallet> listarWallet(){
         return walletRepository.findAll();
+    }
+
+    @GetMapping("/{walletId}/limits")
+    public ResponseEntity<GetLimitWalletModel> availableLimit(@PathVariable UUID walletId){
+        GetLimitWalletModel limitWallet = walletService.availableLimitService(walletId);
+        return ResponseEntity.ok(limitWallet);
     }
 
     @PostMapping

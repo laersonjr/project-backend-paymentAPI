@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 
 @Getter
 @Setter
-public class GetLimitWalletModel extends IdSuperClass {
+public class GetLimitWalletModel {
 
     private BigDecimal value;
 
