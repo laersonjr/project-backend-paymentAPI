@@ -6,11 +6,14 @@ import com.laerson.trace.finance.paymentapi.api.model.PaymentWalletModel;
 import com.laerson.trace.finance.paymentapi.domain.model.Wallet;
 import com.laerson.trace.finance.paymentapi.domain.repository.WalletRepository;
 import com.laerson.trace.finance.paymentapi.domain.service.WalletService;
+import com.laerson.trace.finance.paymentapi.event.RecursoCriadoEvent;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.UUID;
@@ -25,6 +28,9 @@ public class WalletController {
     @Autowired
     private WalletService walletService;
 
+    @Autowired
+    private ApplicationEventPublisher publisher;
+
     @GetMapping
     public List<Wallet> listarWallet(){
         return walletRepository.findAll();
@@ -37,8 +43,10 @@ public class WalletController {
     }
 
     @PostMapping
-    public ResponseEntity<Wallet> criarWallet(@Valid @RequestBody CreateWalletModel createWalletModel){
+    public ResponseEntity<Wallet> criarWallet(@Valid @RequestBody CreateWalletModel createWalletModel,
+                                              HttpServletResponse response){
         Wallet walletSalva = walletService.createWalletService(createWalletModel);
+        publisher.publishEvent(new RecursoCriadoEvent(this, response, walletSalva.getId()));
         return ResponseEntity.status(HttpStatus.CREATED).body(walletSalva);
     }
 
