@@ -62,6 +62,14 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         return handleExceptionInternal(ex, erros, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
     }
 
+    @ExceptionHandler({ValueMostBePositiveExcpetion.class})
+    public ResponseEntity<Object> handleValueMostBePositiveExcpetion(ValueMostBePositiveExcpetion ex){
+        String mensagemUsuario = messageSource.getMessage("valor.negativo", null, LocaleContextHolder.getLocale());
+        String mensagemDesenvolvedor = ex.toString();
+        List<Erro> erros = Arrays.asList(new Erro(mensagemUsuario, mensagemDesenvolvedor));
+        return ResponseEntity.badRequest().body(erros);
+    }
+
     private List<Erro> criarListaDeErros(BindingResult bindingResult) {
         List<Erro> erros = new ArrayList<>();
         for (FieldError fieldError : bindingResult.getFieldErrors()){

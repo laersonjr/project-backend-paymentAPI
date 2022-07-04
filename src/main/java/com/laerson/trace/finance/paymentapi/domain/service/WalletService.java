@@ -1,5 +1,7 @@
 package com.laerson.trace.finance.paymentapi.domain.service;
 
+
+import com.laerson.trace.finance.paymentapi.api.exceptionhandler.ValueMostBePositiveExcpetion;
 import com.laerson.trace.finance.paymentapi.api.model.CreateWalletModel;
 import com.laerson.trace.finance.paymentapi.api.model.GetLimitWalletModel;
 import com.laerson.trace.finance.paymentapi.api.model.PaymentWalletModel;
@@ -41,10 +43,19 @@ public class WalletService {
     }
 
     public void makePaymentService(PaymentWalletModel paymentWalletModel, UUID walletId) {
-        Wallet wallet = findWallet(walletId);
-        WalletPayment walletPayment = toEntityPayment(paymentWalletModel);
-        walletPayment.setWallet(wallet);
-        walletPaymentRepository.save(walletPayment);
+        if (valueMostBePositive(paymentWalletModel.getAmount())) {
+            Wallet wallet = findWallet(walletId);
+            WalletPayment walletPayment = toEntityPayment(paymentWalletModel);
+            walletPayment.setWallet(wallet);
+            walletPaymentRepository.save(walletPayment);
+        }
+    }
+
+    private boolean valueMostBePositive(BigDecimal value){
+        if(value.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new ValueMostBePositiveExcpetion();
+        }
+        return true;
     }
 
     private Wallet toEntity(CreateWalletModel createWalletModel){
