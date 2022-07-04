@@ -1,6 +1,7 @@
 package com.laerson.trace.finance.paymentapi.domain.service;
 
 
+import com.laerson.trace.finance.paymentapi.api.exceptionhandler.MaximumPaymentLimit;
 import com.laerson.trace.finance.paymentapi.api.exceptionhandler.ValueMostBePositiveExcpetion;
 import com.laerson.trace.finance.paymentapi.api.model.CreateWalletModel;
 import com.laerson.trace.finance.paymentapi.api.model.GetLimitWalletModel;
@@ -47,7 +48,17 @@ public class WalletService {
             Wallet wallet = findWallet(walletId);
             WalletPayment walletPayment = toEntityPayment(paymentWalletModel);
             walletPayment.setWallet(wallet);
+
+            BigDecimal sumValue = walletPaymentRepository.sumAmount(walletPayment.getDate());
+            checkPaymentsLimit(sumValue.add(walletPayment.getAmount()));
+
             walletPaymentRepository.save(walletPayment);
+        }
+    }
+
+    private void checkPaymentsLimit(BigDecimal sumValue) {
+        if(sumValue.doubleValue() > LimitPayment.PAGAMENTO){
+            throw new MaximumPaymentLimit();
         }
     }
 
