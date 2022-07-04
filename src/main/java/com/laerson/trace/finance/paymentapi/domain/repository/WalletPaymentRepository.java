@@ -10,7 +10,7 @@ import java.util.UUID;
 
 public interface WalletPaymentRepository extends JpaRepository<WalletPayment, UUID> {
 
-    @Query(nativeQuery = true, value = "SELECT SUM(amount) FROM wallet_payment where date = :date")
+    @Query(nativeQuery = true, value = "SELECT COALESCE(SUM(amount), 0) FROM wallet_payment where date = :date")
     public BigDecimal sumAmount(@Param("date") String date);
 
 }
