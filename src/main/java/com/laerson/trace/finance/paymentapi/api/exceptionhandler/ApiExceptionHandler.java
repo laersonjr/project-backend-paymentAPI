@@ -78,6 +78,14 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity.badRequest().body(erros);
     }
 
+    @ExceptionHandler({InsufficientLimitException.class})
+    public ResponseEntity<Object> handleInsufficientLimitException(InsufficientLimitException ex){
+        String mensagemUsuario = messageSource.getMessage("limite.insuficiente", null, LocaleContextHolder.getLocale());
+        String mensagemDesenvolvedor = ex.toString();
+        List<Erro> erros = Arrays.asList(new Erro(mensagemUsuario, mensagemDesenvolvedor));
+        return ResponseEntity.badRequest().body(erros);
+    }
+
     private List<Erro> criarListaDeErros(BindingResult bindingResult) {
         List<Erro> erros = new ArrayList<>();
         for (FieldError fieldError : bindingResult.getFieldErrors()){

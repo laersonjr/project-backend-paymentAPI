@@ -1,6 +1,7 @@
 package com.laerson.trace.finance.paymentapi.domain.service;
 
 
+import com.laerson.trace.finance.paymentapi.api.exceptionhandler.InsufficientLimitException;
 import com.laerson.trace.finance.paymentapi.api.exceptionhandler.MaximumPaymentLimit;
 import com.laerson.trace.finance.paymentapi.api.exceptionhandler.ValueMostBePositiveExcpetion;
 import com.laerson.trace.finance.paymentapi.api.model.CreateWalletModel;
@@ -33,7 +34,7 @@ public class WalletService {
     public Wallet createWalletService(CreateWalletModel createWalletModel){
         Wallet wallet = toEntity(createWalletModel);
         wallet.setWalletName(wallet.getOwnerName());
-        wallet.setValue(BigDecimal.ZERO);
+        wallet.setValue(BigDecimal.valueOf(10000));
         wallet.setWalletOpening(LocalDateTime.now());
         return walletRepository.save(wallet);
     }
@@ -52,7 +53,18 @@ public class WalletService {
             BigDecimal sumValue = walletPaymentRepository.sumAmount(walletPayment.getDate());
             checkPaymentsLimit(sumValue.add(walletPayment.getAmount()));
 
+            checkLimit(wallet, paymentWalletModel);
+
             walletPaymentRepository.save(walletPayment);
+        }
+    }
+
+    private void checkLimit(Wallet wallet, PaymentWalletModel paymentWalletModel) {
+        if(paymentWalletModel.getAmount().doubleValue() > wallet.getValue().doubleValue()){
+            throw new InsufficientLimitException();
+        } else {
+            wallet.setValue(wallet.getValue().subtract(paymentWalletModel.getAmount()));
+            walletRepository.save(wallet);
         }
     }
 
