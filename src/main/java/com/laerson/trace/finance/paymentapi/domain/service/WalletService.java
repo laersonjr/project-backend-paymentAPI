@@ -50,7 +50,7 @@ public class WalletService {
             WalletPayment walletPayment = toEntityPayment(paymentWalletModel);
             walletPayment.setWallet(wallet);
 
-            BigDecimal sumValue = walletPaymentRepository.sumAmount(walletPayment.getDate());
+            BigDecimal sumValue = walletPaymentRepository.sumAmount(walletPayment.getDate(), wallet.getId());
             checkPaymentsLimit(sumValue.add(walletPayment.getAmount()));
 
             checkLimit(wallet, paymentWalletModel);
